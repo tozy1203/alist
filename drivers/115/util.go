@@ -114,9 +114,9 @@ func (d *Pan115) DownloadWithUA(pickCode, ua string) (*driver115.DownloadInfo, e
 	}
 
 	data := crypto.Encode(params, key)
-
+	ApiDownloadGetUrl := "https://proapi.115.com/android/2.0/ufile/download"
 	bodyReader := strings.NewReader(url.Values{"data": []string{data}}.Encode())
-	reqUrl := fmt.Sprintf("%s?t=%s", driver115.ApiDownloadGetUrl, driver115.Now().String())
+	reqUrl := fmt.Sprintf("%s?t=%s", ApiDownloadGetUrl, driver115.Now().String())
 	req, _ := http.NewRequest(http.MethodPost, reqUrl, bodyReader)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Cookie", d.Cookie)
