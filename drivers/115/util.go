@@ -102,7 +102,7 @@ func (d *Pan115) getNewFileByPickCode(pickCode string) (*FileObj, error) {
 }
 
 func (d *Pan115) getUA() string {
-	return fmt.Sprintf("Mozilla/5.0 115disk/%s", "32.3.8")
+	return fmt.Sprintf("Mozilla/5.0 115Browser/%s", appVer)
 }
 
 func (d *Pan115) DownloadWithUA(pickCode, ua string) (*driver115.DownloadInfo, error) {
@@ -120,7 +120,7 @@ func (d *Pan115) DownloadWithUA(pickCode, ua string) (*driver115.DownloadInfo, e
 	req, _ := http.NewRequest(http.MethodPost, reqUrl, bodyReader)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Cookie", d.Cookie)
-	req.Header.Set("User-Agent", ua)
+	req.Header.Set("User-Agent", "Mozilla/5.0 115disk/32.3.8")
 
 	resp, err := d.client.Client.GetClient().Do(req)
 	if err != nil {
