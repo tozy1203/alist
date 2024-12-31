@@ -102,7 +102,7 @@ func (d *Pan115) getNewFileByPickCode(pickCode string) (*FileObj, error) {
 }
 
 func (d *Pan115) getUA() string {
-	return fmt.Sprintf("Mozilla/5.0 115Browser/%s", appVer)
+	return fmt.Sprintf("Mozilla/5.0 115disk/%s", "32.3.8")
 }
 
 func (d *Pan115) DownloadWithUA(pickCode, ua string) (*driver115.DownloadInfo, error) {
