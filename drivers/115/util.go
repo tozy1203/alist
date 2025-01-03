@@ -14,6 +14,10 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"bytes"
+        "crypto/crc32"
+        "encoding/base64"
+        "encoding/binary"
 
 	"github.com/alist-org/alist/v3/internal/conf"
 	"github.com/alist-org/alist/v3/internal/model"
@@ -105,6 +109,19 @@ func (d *Pan115) getUA() string {
 	return fmt.Sprintf("Mozilla/5.0 115Browser/%s", appVer)
 }
 
+func (d *Pan115) ecdhEncodeToken(timestamp int) string {
+        token := bytes.NewBuffer([]byte{
+                0x1d, 0x03, 0x0e, 0x80, 0xa1, 'x', 0xdc, 0xee, 0xce, 0xcd, 0xa3, 'w', 0xde, 0x12, 0x8d, 0x00, 's', 0x00, 0x00, 0x00,
+        })
+        binary.Write(token, binary.LittleEndian, int32(timestamp))
+        token.Write([]byte{
+                0x8e, 0xd9, 0xdd, 0xcf, 'U', 0xae, 0xa, 0xed, 'F', 0xea, 0x12, 0x1a, 0x1c, 0xfc, 0x81, 0x00, 0x01, 0x00, 0x00, 0x00,
+        })
+        crc := crc32.Checksum([]byte("^j>WD3Kr?J2gLFjD4W2y@" + token.Bytes()), crc32.IEEETable)
+        binary.Write(token, binary.LittleEndian, crc)
+        return base64.StdEncoding.EncodeToString(token.Bytes())
+}
+
 func (d *Pan115) DownloadWithUA(pickCode, ua string) (*driver115.DownloadInfo, error) {
 	key := crypto.GenerateKey()
 	result := driver115.DownloadResp{}
@@ -114,7 +131,7 @@ func (d *Pan115) DownloadWithUA(pickCode, ua string) (*driver115.DownloadInfo, e
 	}
 
 	data := crypto.Encode(params, key)
-	ApiDownloadGetUrl := "https://proapi.115.com/android/2.0/ufile/download"
+	ApiDownloadGetUrl := "https://proapi.115.com/android/2.0/ufile/download?k_ec="+d.ecdhEncodeToken(0)
 	bodyReader := strings.NewReader(url.Values{"data": []string{data}}.Encode())
 	reqUrl := fmt.Sprintf("%s?t=%s", ApiDownloadGetUrl, driver115.Now().String())
 	req, _ := http.NewRequest(http.MethodPost, reqUrl, bodyReader)
