@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 	"bytes"
-        "crypto/crc32"
+        "hash/crc32"
         "encoding/base64"
         "encoding/binary"
 
