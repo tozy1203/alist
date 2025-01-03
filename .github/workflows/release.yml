@@ -81,6 +81,7 @@ jobs:
         run: |
           git config --local user.email "bot@nn.ci"
           git config --local user.name "IlaBot"
+          TIMESTAMP=$(date +%s)
           git tag -a $TIMESTAMP -m "Release at $(date +"%Y-%m-%d %H:%M:%S")"
 
       - name: Push tags
